@@ -1,5 +1,4 @@
 package com.ccfsoft.flume.interceptor;
-import com.ccfsoft.flume.analysis.parse.BillParse;
 import com.google.common.collect.Lists;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
@@ -7,7 +6,6 @@ import org.apache.flume.interceptor.Interceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -49,20 +47,20 @@ public class HdfsInterceptor implements
 //            body = getSkspruceReport(event.getBody());
 //        }
 
-        try {
-            //直接通过数据格式分类
-            body = BillParse.billParse(new String(event.getBody(),"UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        if (body == null) {
-            return null;
-        } else {
-//            logger.info(String.format(
-//                    "结果:%s", body));
-            event.setBody(body.getBytes());
-        }
+//        try {
+//            //直接通过数据格式分类
+//            body = BillParse.billParse(new String(event.getBody(),"UTF-8"));
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//
+//        if (body == null) {
+//            return null;
+//        } else {
+////            logger.info(String.format(
+////                    "结果:%s", body));
+//            event.setBody(body.getBytes());
+//        }
         return event;
     }
 
