@@ -51,8 +51,8 @@ public class HdfsInterceptor implements
         try {
             //解析数据内容和数据种类: 事件{ "data":"数据内容" , "datatype":"数据类型" }
             body = new String(event.getBody(),"UTF-8");
-            logger.info(String.format(
-                    "结果:%s", body));
+//            logger.info(String.format(
+//                    "结果:%s", body));
             Map eventBody = JSONObject.parseObject(body);
             Map<String,String> head = new HashMap<>();
             String dataType = eventBody.get("datatype").toString();
