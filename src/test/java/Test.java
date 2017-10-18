@@ -2,9 +2,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.ccfsoft.utils.PropertyConstants;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by muma on 2017.3.1.
@@ -29,10 +31,14 @@ public class Test {
         String dataType = eventBody.get("datatype").toString();
         head.put("dataType",dataType);
         head.put("hdfsDir",hdfsMap.get(dataType));
-
+        if(hdfsMap.get(dataType) == null)
+        {
+            System.out.println("OK");
+        }
 
 //        for(java.util.Map.Entry<String,Object> entry: JSONObject.parseObject(jsonStr).entrySet()){
 //            System.out.print(entry.getKey()+"-"+entry.getValue()+"\t");
 //        }
+
     }
 }

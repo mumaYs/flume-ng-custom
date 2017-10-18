@@ -1,7 +1,9 @@
 package com.ccfsoft.flume.interceptor;
 import com.alibaba.fastjson.JSONObject;
 import com.ccfsoft.utils.PropertyConstants;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang.StringUtils;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.interceptor.Interceptor;
@@ -22,22 +24,23 @@ public class HdfsInterceptor implements
     private static final Logger logger = LoggerFactory
             .getLogger(HdfsInterceptor.class);
 
-    static final String EXTRACTOR_HEADER_KEY = "extractorHeaderKey";
-    private final String extractorHeaderKey;
+    /** 配置文件的全路径*/
+    static final String PROPERTY_FILE_PATH = "propertyFilePath";
+    private final String propertyFilePath;
 
     /** hdfs目录映射*/
     private static Map<String,String> hdfsMap = new HashMap<>();
 
-    private HdfsInterceptor(String extractorHeaderKey) {
-        this.extractorHeaderKey = extractorHeaderKey;
+    private HdfsInterceptor(String propertyFilePath) {
+        this.propertyFilePath = propertyFilePath;
     }
 
 
     /**
-     * 初始化加载hdfs映射
+     * 通过配置文件初始化加载hdfs映射
      */
     public void initialize() {
-        Iterator<String> it= PropertyConstants.getProperties().stringPropertyNames().iterator();
+        Iterator<String> it= PropertyConstants.getFullPathProperties(propertyFilePath).stringPropertyNames().iterator();
         while(it.hasNext()){
             String key=it.next();
             hdfsMap.put(key,PropertyConstants.getPropertiesKey(key));
@@ -56,10 +59,17 @@ public class HdfsInterceptor implements
             Map eventBody = JSONObject.parseObject(body);
             Map<String,String> head = new HashMap<>();
             String dataType = eventBody.get("datatype").toString();
-            head.put("dataType",dataType);
-            head.put("hdfsDir",hdfsMap.get(dataType));
-            event.setHeaders(head);
-            event.setBody(eventBody.get("data").toString().getBytes());
+
+            //hdfs路径不能为空
+            String hdfsDir = hdfsMap.get(dataType);
+            if(hdfsDir != null)
+            {
+                head.put("dataType",dataType);
+                head.put("hdfsDir",hdfsDir);
+                event.setHeaders(head);
+                event.setBody(eventBody.get("data").toString().getBytes());
+            }
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -78,20 +88,20 @@ public class HdfsInterceptor implements
     }
 
     public static class Builder implements Interceptor.Builder {
-        private String extractorHeaderKey;
+        private String propertyFilePath;
 
         public void configure(Context context) {
-            extractorHeaderKey = context.getString(EXTRACTOR_HEADER_KEY);
-//            Preconditions.checkArgument(
-//                    !StringUtils.isEmpty(extractorHeaderKey),
-//                    "必须指定要抽取内容的header key");
+            propertyFilePath = context.getString(PROPERTY_FILE_PATH);
+            Preconditions.checkArgument(
+                    !StringUtils.isEmpty(propertyFilePath),
+                    "必须指定配置文件的全路径");
         }
 
         public Interceptor build() {
             logger.info(String.format(
-                    "Creating StaticInterceptor: extractorHeaderKey=%s",
-                    extractorHeaderKey));
-            return new HdfsInterceptor(extractorHeaderKey);
+                    "Creating HdfsInterceptor: propertyFilePath=%s",
+                    propertyFilePath));
+            return new HdfsInterceptor(propertyFilePath);
         }
     }
 }
