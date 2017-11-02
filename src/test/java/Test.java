@@ -23,7 +23,7 @@ public class Test {
             String key=it.next();
             hdfsMap.put(key,PropertyConstants.getPropertiesKey(key));
         }
-        String jsonStr = "{ \"data\":\"数据内容\" , \"datatype\":\"数据类型\" }";
+        String jsonStr = "{ \"data\":\"数据内容\" , \"datatype\":\"test\" }";
 
 
         Map eventBody = JSONObject.parseObject(jsonStr);
@@ -31,10 +31,8 @@ public class Test {
         String dataType = eventBody.get("datatype").toString();
         head.put("dataType",dataType);
         head.put("hdfsDir",hdfsMap.get(dataType));
-        if(hdfsMap.get(dataType) == null)
-        {
-            System.out.println("OK");
-        }
+        System.out.println(hdfsMap.get(dataType));
+
 
 //        for(java.util.Map.Entry<String,Object> entry: JSONObject.parseObject(jsonStr).entrySet()){
 //            System.out.print(entry.getKey()+"-"+entry.getValue()+"\t");
