@@ -51,7 +51,7 @@ public class HdfsInterceptor implements
         try {
             //Base64解码事件内容
             String originalStr = new String(event.getBody(),"UTF-8").trim();
-            body = new String(Base64.getDecoder().decode(originalStr));
+            body = new String(Base64.getDecoder().decode(originalStr)).trim();
 
             //格式是否为:{ "data":"数据内容" , "datatype":"数据类型" }
             if(body.startsWith("{") && body.endsWith("}") && body.contains("data") && body.contains("datatype")){
