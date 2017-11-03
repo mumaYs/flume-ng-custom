@@ -11,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 映射数据类型和Hdfs路径的拦截器
@@ -52,24 +49,29 @@ public class HdfsInterceptor implements
     public Event intercept(Event event) {
         String body = null;
         try {
-            //解析数据内容和数据种类: 事件{ "data":"数据内容" , "datatype":"数据类型" }
-            body = new String(event.getBody(),"UTF-8");
-//            logger.info(String.format(
-//                    "结果:%s", body));
-            Map eventBody = JSONObject.parseObject(body);
-            Map<String,String> head = new HashMap<>();
-            String dataType = eventBody.get("datatype").toString();
+            //Base64解码事件内容
+            body = new String(Base64.getDecoder().decode(event.getBody()),"UTF-8").trim();
 
-            //hdfs路径不能为空
-            String hdfsDir = hdfsMap.get(dataType);
-            if(hdfsDir != null)
-            {
-                head.put("dataType",dataType);
-                head.put("hdfsDir",hdfsDir);
-                event.setHeaders(head);
-                event.setBody(eventBody.get("data").toString().getBytes());
+            //格式是否为:{ "data":"数据内容" , "datatype":"数据类型" }
+            if(body.startsWith("{") && body.endsWith("}") && body.contains("data") && body.contains("datatype")){
+                Map eventBody = JSONObject.parseObject(body);
+                Map<String,String> head = new HashMap<>();
+                String dataType = eventBody.get("datatype").toString();
+
+                //hdfs路径不能为空
+                String hdfsDir = hdfsMap.get(dataType);
+                if(hdfsDir != null)
+                {
+                    head.put("dataType",dataType);
+                    head.put("hdfsDir",hdfsDir);
+                    event.setHeaders(head);
+                    event.setBody(eventBody.get("data").toString().getBytes());
+                }else{
+                    logger.warn(String.format("此数据类型:%s,没有响应的HDFS目录需要在data-hdfs.properties添加配置",dataType));
+                }
+            }else{
+                logger.warn(String.format("此数据内容:%s不是指定的json格式",body));
             }
-
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
