@@ -68,9 +68,11 @@ public class HdfsInterceptor implements
                     event.setHeaders(head);
                     event.setBody(eventBody.get("data").toString().getBytes());
                 }else{
+                    event.setBody(null);
                     logger.warn(String.format("此数据类型:%s,没有响应的HDFS目录需要在data-hdfs.properties添加配置",dataType));
                 }
             }else{
+                event.setBody(null);
                 logger.warn(String.format("此数据内容:%s不是指定的json格式",body));
             }
         } catch (UnsupportedEncodingException e) {
