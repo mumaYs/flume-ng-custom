@@ -47,7 +47,7 @@ public class HdfsInterceptor implements
     public void close() { }
 
     public Event intercept(Event event) {
-        String body = null;
+        String body;
         try {
             //Base64解码事件内容
             String originalStr = new String(event.getBody(),"UTF-8").trim();
