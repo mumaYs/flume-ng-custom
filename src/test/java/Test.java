@@ -3,10 +3,7 @@ import com.ccfsoft.utils.PropertyConstants;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,5 +36,12 @@ public class Test {
 ////        for(java.util.Map.Entry<String,Object> entry: JSONObject.parseObject(jsonStr).entrySet()){
 ////            System.out.print(entry.getKey()+"-"+entry.getValue()+"\t");
 ////        }
+//        String a = "{ \"data\":\"数据内容\" , \"datatype\":\"test\" }";
+//        String b = Base64.getEncoder().encodeToString(a.getBytes());
+//        System.out.println(b);
+//        System.out.println(new String(Base64.getDecoder().decode(b),"UTF-8").trim());
+
+        System.out.println(new String(Base64.getDecoder().decode("eyAiZGF0YSI6IuaVsOaNruWGheWuuSIgLCAiZGF0YXR5cGUiOiJ0ZXN0IiB9"),"UTF-8").trim());
+
     }
 }
