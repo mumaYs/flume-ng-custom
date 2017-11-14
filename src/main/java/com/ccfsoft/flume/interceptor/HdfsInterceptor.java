@@ -55,7 +55,13 @@ public class HdfsInterceptor implements
 
             //格式是否为:{ "data":"数据内容" , "datatype":"数据类型" }
             if(body.startsWith("{") && body.endsWith("}") && body.contains("data") && body.contains("datatype")){
-                Map eventBody = JSONObject.parseObject(body);
+                Map eventBody = null;
+                try {
+                    eventBody = JSONObject.parseObject(body);
+                } catch (Exception e) {
+                    logger.warn(String.format("字符串:%s 的json格式不对",body));
+                    return null;
+                }
                 Map<String,String> head = new HashMap<>();
                 String dataType = eventBody.get("datatype").toString();
 
