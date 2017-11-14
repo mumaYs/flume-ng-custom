@@ -59,7 +59,7 @@ public class HdfsInterceptor implements
                 try {
                     eventBody = JSONObject.parseObject(body);
                 } catch (Exception e) {
-                    logger.warn(String.format("字符串:%s 的json格式不对",body));
+                    logger.warn(String.format("此数据内容:%s,json格式不对",body));
                     return null;
                 }
                 Map<String,String> head = new HashMap<>();
@@ -79,7 +79,7 @@ public class HdfsInterceptor implements
                 }
             }else{
                 event = null;
-                logger.warn(String.format("此数据内容:%s不是指定的json格式",body));
+                logger.warn(String.format("此数据内容:%s,不是指定的json格式",body));
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
